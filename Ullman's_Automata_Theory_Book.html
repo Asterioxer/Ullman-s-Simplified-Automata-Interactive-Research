@@ -1,0 +1,1266 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Automata Theory: Foundations of Computation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --earth-light: #f5f1eb;
+            --earth-medium: #e8ddd4;
+            --earth-dark: #d4c4b0;
+            --teal-accent: #2d5a5a;
+            --gold-accent: #b8860b;
+            --charcoal: #2c2c2c;
+            --warm-white: #fefcf8;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--warm-white);
+            color: var(--charcoal);
+            line-height: 1.7;
+        }
+        
+        .serif-display {
+            font-family: 'Crimson Text', serif;
+        }
+        
+        .toc-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--earth-light);
+            border-right: 1px solid var(--earth-dark);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 2rem 1.5rem;
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            min-height: 60vh;
+        }
+        
+        .hero-text {
+            background: linear-gradient(135deg, rgba(45, 90, 90, 0.9), rgba(45, 90, 90, 0.7));
+            color: white;
+            padding: 3rem;
+            border-radius: 8px;
+        }
+        
+        .hero-visual {
+            position: relative;
+            height: 400px;
+            background: var(--earth-medium);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .citation-link {
+            color: var(--teal-accent);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--teal-accent);
+        }
+        
+        .citation-link:hover {
+            background-color: rgba(45, 90, 90, 0.1);
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--teal-accent);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--earth-light), var(--earth-medium));
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 3px solid var(--gold-accent);
+        }
+        
+        .diagram-container {
+            background: white;
+            border: 2px solid var(--earth-medium);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .toc-link {
+            display: block;
+            padding: 0.5rem 0;
+            color: var(--charcoal);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .toc-link:hover {
+            color: var(--teal-accent);
+            border-bottom-color: var(--teal-accent);
+            padding-left: 0.5rem;
+        }
+        
+        .toc-link.active {
+            color: var(--teal-accent);
+            font-weight: 600;
+            border-left: 3px solid var(--teal-accent);
+            padding-left: 1rem;
+        }
+        
+        .mermaid-container {
+            display: flex;
+            justify-content: center;
+            min-height: 300px;
+            max-height: 800px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mermaid-container .mermaid {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            transform-origin: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .mermaid-container .mermaid svg {
+            max-width: 100%;
+            height: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .mermaid-container .mermaid:active {
+            cursor: grabbing;
+        }
+
+        .mermaid-container.zoomed .mermaid {
+            height: 100%;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .mermaid-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid-control-btn {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #374151;
+            font-size: 14px;
+            min-width: 36px;
+            height: 36px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-control-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .mermaid-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Enhanced mermaid node styling for better contrast */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            stroke-width: 2px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .mermaid .node .label {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .mermaid .edgePath .path {
+            stroke-width: 2px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        
+        .mermaid .edgeLabel {
+            background-color: white;
+            border-radius: 4px;
+            padding: 2px 6px;
+            border: 1px solid var(--earth-dark);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 1024px) {
+            .toc-fixed {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .toc-fixed.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .mermaid-control-btn:not(.reset-zoom) {
+                display: none;
+            }
+            .mermaid-controls {
+                top: auto;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-text, .hero-visual {
+                height: auto;
+                min-height: 300px;
+            }
+            
+            .hero-text {
+                padding: 2rem;
+            }
+            
+            .hero-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-text p {
+                font-size: 1rem;
+            }
+            
+            .hero-visual {
+                height: 300px;
+            }
+            
+            .section-card {
+                padding: 1.5rem;
+            }
+            
+            .mermaid-container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .hero-text {
+                padding: 1.5rem;
+            }
+            
+            .hero-text h1 {
+                font-size: 1.25rem;
+            }
+            
+            .hero-text p {
+                font-size: 0.9rem;
+            }
+            
+            .section-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+  </head>
+
+  <body>
+    <!-- Table of Contents -->
+    <nav class="toc-fixed">
+      <div class="mb-8">
+        <h3 class="serif-display text-xl font-semibold text-teal-accent mb-4">Contents</h3>
+        <div class="space-y-1">
+          <a href="#introduction" class="toc-link">Introduction</a>
+          <a href="#finite-automata" class="toc-link">Finite Automata</a>
+          <a href="#regular-expressions" class="toc-link">Regular Expressions</a>
+          <a href="#regular-properties" class="toc-link">Properties of Regular Languages</a>
+          <a href="#context-free" class="toc-link">Context-Free Grammars</a>
+          <a href="#pushdown-automata" class="toc-link">Pushdown Automata</a>
+          <a href="#cfl-properties" class="toc-link">Properties of CFLs</a>
+          <a href="#turing-machines" class="toc-link">Turing Machines</a>
+          <a href="#undecidability" class="toc-link">Undecidability</a>
+          <a href="#np-completeness" class="toc-link">NP-Completeness</a>
+          <a href="#comparisons" class="toc-link">Comparisons</a>
+          <a href="#conclusion" class="toc-link">Conclusion</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="px-8 py-12 bg-gradient-to-br from-earth-light to-earth-medium">
+        <div class="hero-grid max-w-7xl mx-auto">
+          <div class="hero-text">
+            <h1 class="serif-display text-4xl font-bold mb-6 leading-tight">
+              <em>Introduction to Automata Theory, Languages, and Computation</em>
+            </h1>
+            <p class="text-xl mb-4 opacity-90">
+              A comprehensive exploration of the fundamental theories that underpin computation
+            </p>
+            <div class="text-lg opacity-80">
+              <p>By John E. Hopcroft, Rajeev Motwani, and Jeffrey D. Ullman</p>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <img src="https://kimi-web-img.moonshot.cn/img/media.licdn.com/fc538e74e206d336e7c77a384e7d147b2bd6e669" alt="Abstract automata theory visualization" class="w-full h-full object-cover" size="large" aspect="wide" query="abstract automata theory" referrerpolicy="no-referrer" data-modified="1" data-score="11589.00"/>
+          </div>
+        </div>
+      </section>
+
+      <!-- Introduction Section -->
+      <section id="introduction" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Introduction to Automata Theory</h2>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Foundational Concepts</h3>
+            <p>
+              <a href="https://en.wikipedia.org/wiki/Introduction_to_Automata_Theory,_Languages,_and_Computation" class="citation-link">[3]</a>
+              The textbook by Hopcroft, Motwani, and Ullman is a cornerstone in theoretical computer science, often called the &#34;Cinderella Book&#34; due to its distinctive cover art. It provides a comprehensive guide to understanding the fundamental principles that underpin computation, focusing on abstract machines (automata), formal languages, and the inherent capabilities and limitations of computational processes.
+            </p>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://research.cip.cgiar.org/fetch.php/wp5VOG/4421336/hopcroft_motwani-ullman_automata_theory_languages_and_computation_3rd_edition.pdf" class="citation-link">[18]</a>
+            The book systematically explores models from finite automata to Turing machines, their properties, and their applications, establishing a rigorous foundation for understanding the capabilities and limitations of computation. The third edition is noted for being thoroughly updated and is considered an essential resource for those studying the foundational aspects of computer science.
+          </p>
+
+          <div class="diagram-container">
+            <h4 class="serif-display text-lg font-semibold mb-4">Hierarchy of Automata Models</h4>
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                flowchart TD
+                A[&#34;Finite Automata&#34;] --&gt; B[&#34;Pushdown Automata&#34;]
+                B --&gt; C[&#34;Turing Machines&#34;]
+
+                A --&gt; D[&#34;Regular Languages&#34;]
+                B --&gt; E[&#34;Context-Free Languages&#34;]
+                C --&gt; F[&#34;Recursively Enumerable Languages&#34;]
+
+                style A fill:#e8ddd4,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style B fill:#d4c4b0,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style C fill:#2d5a5a,stroke:#fefcf8,stroke-width:2px,color:#fefcf8
+                style D fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style E fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style F fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+              </div>
+            </div>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://dokumen.pub/theory-of-automata-languages-and-computation-0070702047-9780070702042.html" class="citation-link">[42]</a>
+            The initial chapters on mathematical preliminaries are crucial for developing the necessary logical and analytical skills. Concepts like sets, functions, relations, graphs, and trees are fundamental to defining states and transitions in automata. Proof techniques, such as mathematical induction and proof by contradiction, are extensively used throughout the book.
+          </p>
+        </div>
+      </section>
+
+      <!-- Finite Automata Section -->
+      <section id="finite-automata" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Finite Automata</h2>
+
+          <h3 class="serif-display text-xl font-semibold mb-4">Deterministic Finite Automata (DFAs)</h3>
+          <p class="mb-4">
+            <a href="https://proofwiki.org/wiki/Book:John_E._Hopcroft/Introduction_to_Automata_Theory,_Languages,_and_Computation/Third_Edition" class="citation-link">[24]</a>
+            A DFA is formally defined as a quintuple (Q, Σ, δ, q₀, F), where Q is a finite set of states, Σ is a finite input alphabet, δ: Q × Σ → Q is the transition function, q₀ ∈ Q is the start state, and F ⊆ Q is the set of accept states. The operation of a DFA is characterized by its determinism: for any given state and input symbol, there is exactly one state to which the automaton transitions.
+          </p>
+
+          <div class="highlight-box">
+            <h4 class="serif-display text-lg font-semibold mb-3">Nondeterministic Finite Automata (NFAs)</h4>
+            <p>
+              An NFA is defined by a quintuple (Q, Σ, δ, q₀, F), but with a key difference in the transition function: δ: Q × (Σ ∪ {ε}) → P(Q). This allows for several types of nondeterminism: from a given state and input symbol, the NFA can transition to zero, one, or multiple states, and it can have ε-transitions that change state without consuming any input symbol.
+            </p>
+          </div>
+
+          <p class="mb-4">
+            A crucial result is that <strong>NFAs and DFAs are equivalent</strong> in terms of the languages they can recognize. The textbook provides methods for converting an NFA to an equivalent DFA using the subset construction algorithm.
+          </p>
+
+          <div class="diagram-container">
+            <h4 class="serif-display text-lg font-semibold mb-4">NFA to DFA Conversion Process</h4>
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph LR
+                A[&#34;NFA with states {q0, q1}&#34;] --&gt; B[&#34;Identify all possible subsets&#34;]
+                B --&gt; C[&#34;Create DFA states: ∅, {q0}, {q1}, {q0,q1}&#34;]
+                C --&gt; D[&#34;Calculate transitions between subsets&#34;]
+                D --&gt; E[&#34;Define accept states containing any NFA accept state&#34;]
+
+                style A fill:#e8ddd4,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style E fill:#2d5a5a,stroke:#fefcf8,stroke-width:2px,color:#fefcf8
+                style B fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style C fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style D fill:#f5f1eb,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Regular Expressions Section -->
+      <section id="regular-expressions" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Regular Expressions and Languages</h2>
+
+          <p class="mb-4">
+            <a href="https://proofwiki.org/wiki/Book:John_E._Hopcroft/Introduction_to_Automata_Theory,_Languages,_and_Computation/Third_Edition" class="citation-link">[24]</a>
+            Regular expressions provide a powerful and concise notation for describing patterns in strings. The syntax is defined recursively with base cases (∅, ε, and individual symbols) and inductive cases (union, concatenation, Kleene star).
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Equivalence with Finite Automata</h3>
+            <p>
+              One of the most significant theoretical results is the equivalence between regular expressions and finite automata. A language can be described by a regular expression if and only if it can be recognized by a DFA or NFA. This establishes regular languages as a well-defined class with multiple characterizations.
+            </p>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://link.springer.com/content/pdf/10.1007/978-3-642-20835-5_3.pdf" class="citation-link">[87]</a>
+            Regular expressions are extensively used in pattern matching across computing applications. One of the most important functions of a computer is to recognize specified patterns, and the fastest string search algorithms are based on pattern recognition, which is based on automata theory.
+          </p>
+        </div>
+      </section>
+
+      <!-- Properties of Regular Languages Section -->
+      <section id="regular-properties" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Properties of Regular Languages</h2>
+
+          <h3 class="serif-display text-xl font-semibold mb-4">Closure Properties</h3>
+          <p class="mb-4">
+            Regular languages exhibit rich closure properties. If one or more regular languages are operated upon by certain operations, the resulting language is also regular. These properties are proven by constructive methods, showing how to build an automaton or regular expression for the resulting language.
+          </p>
+
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full border-collapse border border-earth-dark">
+              <thead>
+                <tr class="bg-earth-light">
+                  <th class="border border-earth-dark p-3 text-left">Operation</th>
+                  <th class="border border-earth-dark p-3 text-left">Description</th>
+                  <th class="border border-earth-dark p-3 text-left">Proof Technique</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border border-earth-dark p-3 font-semibold">Union</td>
+                  <td class="border border-earth-dark p-3">L₁ ∪ L₂ is regular</td>
+                  <td class="border border-earth-dark p-3">Construct NFA that non-deterministically chooses either NFA for L₁ or L₂</td>
+                </tr>
+                <tr class="bg-earth-light">
+                  <td class="border border-earth-dark p-3 font-semibold">Concatenation</td>
+                  <td class="border border-earth-dark p-3">L₁L₂ is regular</td>
+                  <td class="border border-earth-dark p-3">Connect accept states of L₁&#39;s NFA to start state of L₂&#39;s NFA with ε-transitions</td>
+                </tr>
+                <tr>
+                  <td class="border border-earth-dark p-3 font-semibold">Kleene Star</td>
+                  <td class="border border-earth-dark p-3">L* is regular</td>
+                  <td class="border border-earth-dark p-3">Add ε-transitions from accept states back to start state; make start state accepting</td>
+                </tr>
+                <tr class="bg-earth-light">
+                  <td class="border border-earth-dark p-3 font-semibold">Complement</td>
+                  <td class="border border-earth-dark p-3">Σ* - L is regular</td>
+                  <td class="border border-earth-dark p-3">Take DFA for L, ensure it&#39;s complete, swap accepting and non-accepting states</td>
+                </tr>
+                <tr>
+                  <td class="border border-earth-dark p-3 font-semibold">Intersection</td>
+                  <td class="border border-earth-dark p-3">L₁ ∩ L₂ is regular</td>
+                  <td class="border border-earth-dark p-3">Construct product automaton with states as pairs from L₁ and L₂&#39;s DFAs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Pumping Lemma for Regular Languages</h3>
+            <p>
+              The Pumping Lemma provides a necessary condition for a language to be regular. If a language L is regular, there exists a constant p (the pumping length) such that any string s in L with |s| ≥ p can be divided into three parts, s = xyz, satisfying:
+            </p>
+            <ol class="list-decimal list-inside mt-2 space-y-1">
+              <li>|xy| ≤ p</li>
+              <li>|y| &gt; 0</li>
+              <li>For all i ≥ 0, xy<sup>i</sup>z ∈ L</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- Context-Free Grammars Section -->
+      <section id="context-free" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Context-Free Grammars and Languages</h2>
+
+          <p class="mb-4">
+            A Context-Free Grammar (CFG) is formally defined as a 4-tuple G = (V, Σ, R, S), where V is a finite set of variables, Σ is a finite set of terminals, R is a finite set of production rules, and S ∈ V is the start symbol.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Examples of Context-Free Languages</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold mb-2">Balanced Parentheses:</h4>
+                <p class="text-sm">S → (S) | SS | ε</p>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-2">a<sup>n</sup>b<sup>n</sup>:</h4>
+                <p class="text-sm">S → aSb | ε</p>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-2">Palindromes:</h4>
+                <p class="text-sm">S → aSa | bSb | a | b | ε</p>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-2">Arithmetic Expressions:</h4>
+                <p class="text-sm">E → E + T | T, T → T * F | F, F → (E) | id</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://www.i-programmer.info/news/150/8990.html" class="citation-link">[192]</a>
+            Context-free grammars have a profound relationship with programming languages. They are the standard tool for defining the syntax of modern programming languages, as they can describe nested structures like balanced parentheses, begin-end blocks, and control flow statements that cannot be handled by regular grammars alone.
+          </p>
+        </div>
+      </section>
+
+      <!-- Pushdown Automata Section -->
+      <section id="pushdown-automata" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Pushdown Automata</h2>
+
+          <p class="mb-4">
+            A Pushdown Automaton (PDA) is a finite automaton equipped with an unbounded stack, which provides memory that allows it to recognize context-free languages. Formally, a PDA is defined as a 7-tuple P = (Q, Σ, Γ, δ, q₀, Z₀, F).
+          </p>
+
+          <div class="diagram-container">
+            <h4 class="serif-display text-lg font-semibold mb-4">PDA Operation Example: Recognizing 0<sup>n</sup>1<sup>n</sup></h4>
+            <div class="mermaid-container">
+              <div class="mermaid-controls">
+                <button class="mermaid-control-btn zoom-in" title="放大">
+                  <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="mermaid-control-btn zoom-out" title="缩小">
+                  <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="mermaid-control-btn reset-zoom" title="重置">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+                <button class="mermaid-control-btn fullscreen" title="全屏查看">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+              <div class="mermaid">
+                graph LR
+                Q0[&#34;q₀: Start&#34;] --&gt; |&#34;0, Z₀ → XZ₀&#34;| Q0
+                Q0 --&gt; |&#34;0, X → XX&#34;| Q0
+                Q0 --&gt; |&#34;1, X → ε&#34;| Q1[&#34;q₁: Popping&#34;]
+                Q1 --&gt; |&#34;1, X → ε&#34;| Q1
+                Q1 --&gt; |&#34;ε, Z₀ → Z₀&#34;| Q2[&#34;q₂: Accept&#34;]
+
+                style Q0 fill:#e8ddd4,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style Q1 fill:#d4c4b0,stroke:#2c2c2c,stroke-width:2px,color:#2c2c2c
+                style Q2 fill:#2d5a5a,stroke:#fefcf8,stroke-width:2px,color:#fefcf8
+              </div>
+            </div>
+          </div>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Equivalence of PDAs and CFGs</h3>
+            <p>
+              A fundamental theorem states that a language L is generated by a CFG if and only if L is recognized by a PDA. This establishes context-free languages as the class of languages recognized by PDAs, providing two different perspectives: a generative one (CFGs) and a machine-based one (PDAs).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Properties of CFLs Section -->
+      <section id="cfl-properties" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Properties of Context-Free Languages</h2>
+
+          <p class="mb-4">
+            Context-Free Languages exhibit some, but not all, of the closure properties that regular languages do. Unlike regular languages, CFLs are <strong>not closed under intersection or complement</strong>, which has important implications for proving languages non-context-free.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Pumping Lemma for CFLs</h3>
+            <p>
+              The Pumping Lemma for CFLs states that for any CFL L, there exists a constant p such that any string s in L with |s| ≥ p can be divided into five parts, s = uvxyz, satisfying:
+            </p>
+            <ol class="list-decimal list-inside mt-2 space-y-1">
+              <li>|vxy| ≤ p</li>
+              <li>|vy| &gt; 0</li>
+              <li>For all i ≥ 0, uv<sup>i</sup>xy<sup>i</sup>z ∈ L</li>
+            </ol>
+            <p class="mt-2">
+              This lemma is used to prove that languages like {a<sup>n</sup>b<sup>n</sup>c<sup>n</sup> | n ≥ 0} are not context-free.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Turing Machines Section -->
+      <section id="turing-machines" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Turing Machines</h2>
+
+          <p class="mb-4">
+            A Turing Machine (TM) is an abstract mathematical model of computation that provides a precise definition of an algorithm. Formally, a TM is defined as a 7-tuple M = (Q, Σ, Γ, δ, q₀, B, F), where Γ contains a special blank symbol B and δ: Q × Γ → Q × Γ × {L, R}.
+          </p>
+
+          <div class="diagram-container">
+            <h4 class="serif-display text-lg font-semibold mb-4">Turing Machine Components</h4>
+            <img src="https://kimi-web-img.moonshot.cn/img/ds.uth.gr/b323dceb75dbbc7f58679cc817298213a497af8a.jpg" alt="Turing machine with tape, head, and control mechanism" class="w-full max-w-2xl mx-auto" size="medium" aspect="wide" style="linedrawing" query="Turing machine abstract diagram" referrerpolicy="no-referrer" data-modified="1" data-score="11482.00"/>
+          </div>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Turing-Recognizable vs. Decidable Languages</h3>
+            <p>
+              TMs define two fundamental classes of languages:
+            </p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+              <li><strong>Turing-Recognizable (Recursively Enumerable):</strong> Languages where a TM accepts all strings in the language and either rejects or loops on strings not in the language.</li>
+              <li><strong>Decidable (Recursive):</strong> Languages where a TM accepts all strings in the language and rejects all strings not in the language, guaranteed to halt on all inputs.</li>
+            </ul>
+            <p class="mt-2">
+              Every decidable language is Turing-recognizable, but the converse is not true. The Halting Problem is Turing-recognizable but not decidable.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Undecidability Section -->
+      <section id="undecidability" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Undecidability</h2>
+
+          <p class="mb-4">
+            A decision problem is <strong>undecidable</strong> if no algorithm exists that can solve it for any valid input in a finite amount of time. The existence of undecidable problems demonstrates fundamental limits on what can be computed.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">The Halting Problem</h3>
+            <p>
+              The most famous undecidable problem, proven by Alan Turing in 1936. Given a description of a Turing Machine M and an input string w, determine whether M halts when run on input w. The proof uses diagonalization and contradiction:
+            </p>
+            <ol class="list-decimal list-inside mt-2 space-y-1">
+              <li>Assume a TM H exists that solves the Halting Problem</li>
+              <li>Construct a TM D that takes input M and simulates H(M, M)</li>
+              <li>If H(M, M) accepts, D loops; if H(M, M) rejects, D accepts</li>
+              <li>Consider D(D): contradiction arises in both cases</li>
+            </ol>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://bercher.net/teaching/teaching-at-the-anu/courses/theory" class="citation-link">[195]</a>
+            The implications are profound: it&#39;s impossible to create a general program that can analyze other programs and determine if they will terminate, which affects software verification, compiler design, and our understanding of computation&#39;s limits.
+          </p>
+        </div>
+      </section>
+
+      <!-- NP-Completeness Section -->
+      <section id="np-completeness" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Intractable Problems and NP-Completeness</h2>
+
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="highlight-box">
+              <h3 class="serif-display text-xl font-semibold mb-3">Class P</h3>
+              <p>
+                Decision problems solvable by a deterministic Turing machine in polynomial time (O(n<sup>k</sup>)). Considered &#34;tractable&#34; or efficiently solvable.
+              </p>
+            </div>
+            <div class="highlight-box">
+              <h3 class="serif-display text-xl font-semibold mb-3">Class NP</h3>
+              <p>
+                Decision problems where a &#34;yes&#34; answer can be verified by a deterministic TM in polynomial time, given an appropriate certificate. Equivalently, solvable by a nondeterministic TM in polynomial time.
+              </p>
+            </div>
+          </div>
+
+          <p class="mb-4">
+            The <strong>P vs NP question</strong> asks whether P = NP. Most researchers believe P ≠ NP, meaning there are problems inherently harder to solve than to verify. NP-completeness provides strong evidence for this belief.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">NP-Complete Problems</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold">Boolean Satisfiability (SAT)</h4>
+                <p class="text-sm">Given a Boolean formula, is there a satisfying assignment?</p>
+              </div>
+              <div>
+                <h4 class="font-semibold">Traveling Salesman Problem</h4>
+                <p class="text-sm">Is there a tour with total distance ≤ B?</p>
+              </div>
+              <div>
+                <h4 class="font-semibold">Clique Problem</h4>
+                <p class="text-sm">Does a graph contain a clique of size k?</p>
+              </div>
+              <div>
+                <h4 class="font-semibold">Vertex Cover</h4>
+                <p class="text-sm">Does a graph have a vertex cover of size k?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparisons Section -->
+      <section id="comparisons" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Comparisons and Perspectives</h2>
+
+          <h3 class="serif-display text-xl font-semibold mb-4">Chomsky Hierarchy</h3>
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full border-collapse border border-earth-dark">
+              <thead>
+                <tr class="bg-earth-light">
+                  <th class="border border-earth-dark p-3 text-left">Type</th>
+                  <th class="border border-earth-dark p-3 text-left">Grammar</th>
+                  <th class="border border-earth-dark p-3 text-left">Language Class</th>
+                  <th class="border border-earth-dark p-3 text-left">Automaton</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="border border-earth-dark p-3">Type-0</td>
+                  <td class="border border-earth-dark p-3">Unrestricted</td>
+                  <td class="border border-earth-dark p-3">Recursively Enumerable</td>
+                  <td class="border border-earth-dark p-3">Turing Machine</td>
+                </tr>
+                <tr class="bg-earth-light">
+                  <td class="border border-earth-dark p-3">Type-1</td>
+                  <td class="border border-earth-dark p-3">Context-Sensitive</td>
+                  <td class="border border-earth-dark p-3">Context-Sensitive</td>
+                  <td class="border border-earth-dark p-3">Linear Bounded Automaton</td>
+                </tr>
+                <tr>
+                  <td class="border border-earth-dark p-3">Type-2</td>
+                  <td class="border border-earth-dark p-3">Context-Free</td>
+                  <td class="border border-earth-dark p-3">Context-Free</td>
+                  <td class="border border-earth-dark p-3">Pushdown Automaton</td>
+                </tr>
+                <tr class="bg-earth-light">
+                  <td class="border border-earth-dark p-3">Type-3</td>
+                  <td class="border border-earth-dark p-3">Regular</td>
+                  <td class="border border-earth-dark p-3">Regular</td>
+                  <td class="border border-earth-dark p-3">Finite Automaton</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Comparison with Sipser&#39;s Text</h3>
+            <p>
+              <a href="https://dpvipracollege.ac.in/wp-content/uploads/2023/01/John-E.-Hopcroft-Rajeev-Motwani-Jeffrey-D.-Ullman-Introduction-to-Automata-Theory-Languages-and-Computations-Prentice-Hall-2006.pdf" class="citation-link">[245]</a>
+              While both HMU and Sipser cover similar core topics, HMU is more formal and theorem-proof oriented, assuming mathematical maturity. Sipser emphasizes intuition and motivation, with &#34;proof idea&#34; sections before formal proofs, making it more accessible for first courses in theory.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Conclusion Section -->
+      <section id="conclusion" class="px-8 py-12 max-w-6xl mx-auto">
+        <div class="section-card">
+          <h2 class="serif-display text-3xl font-bold text-teal-accent mb-6">Conclusion</h2>
+
+          <div class="highlight-box mb-6">
+            <h3 class="serif-display text-xl font-semibold mb-3">Summary of Key Concepts</h3>
+            <p>
+              &#34;Introduction to Automata Theory, Languages, and Computation&#34; provides a comprehensive journey through the foundational theories of computer science. The book systematically progresses from finite automata and regular languages through pushdown automata and context-free languages to Turing machines and computational complexity. It establishes rigorous foundations for understanding what can be computed, with what resources, and what fundamental limits exist on computation.
+            </p>
+          </div>
+
+          <p class="mb-4">
+            <a href="https://pustakkosh.com/products/introduction-to-automatta-theory-languagesand-computation/" class="citation-link">[27]</a>
+            The text&#39;s enduring relevance lies in its coverage of fundamental concepts that form the bedrock of theoretical computer science. These concepts are essential for understanding the capabilities and limitations of computation, crucial for designing algorithms, programming languages, compilers, and secure systems.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="serif-display text-xl font-semibold mb-3">Enduring Relevance</h3>
+            <p>
+              The book maintains its importance due to:
+            </p>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+              <li>Timeless fundamental concepts that form the bedrock of theoretical computer science</li>
+              <li>Rigorous and comprehensive approach that provides deep understanding</li>
+              <li>Widespread practical applications in compiler design, text processing, and software verification</li>
+              <li>Clear pedagogical structure progressing from simpler to more complex models</li>
+              <li>Adaptability through multiple editions while preserving core strengths</li>
+            </ul>
+          </div>
+
+          <p class="mt-6 text-lg">
+            <a href="https://en.wikipedia.org/wiki/Introduction_to_Automata_Theory,_Languages,_and_Computation" class="citation-link">[3]</a>
+            As long as the fundamental questions of computation remain central to computer science, Hopcroft, Motwani, and Ullman&#39;s work will continue to be an indispensable resource for students, educators, and researchers in the field.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+        // Initialize Mermaid with enhanced configuration
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e8ddd4',
+                primaryTextColor: '#2c2c2c',
+                primaryBorderColor: '#2d5a5a',
+                lineColor: '#2d5a5a',
+                secondaryColor: '#f5f1eb',
+                tertiaryColor: '#d4c4b0',
+                background: '#fefcf8',
+                mainBkg: '#e8ddd4',
+                secondBkg: '#d4c4b0',
+                tertiaryBkg: '#f5f1eb',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px'
+            },
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: false
+            },
+            gantt: {
+                useMaxWidth: false
+            }
+        });
+
+        // Initialize Mermaid Controls for zoom and pan
+        function initializeMermaidControls() {
+            const containers = document.querySelectorAll('.mermaid-container');
+
+            containers.forEach(container => {
+                const mermaidElement = container.querySelector('.mermaid');
+                let scale = 1;
+                let isDragging = false;
+                let startX, startY, translateX = 0, translateY = 0;
+
+                // 触摸相关状态
+                let isTouch = false;
+                let touchStartTime = 0;
+                let initialDistance = 0;
+                let initialScale = 1;
+                let isPinching = false;
+
+                // Zoom controls
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                const resetBtn = container.querySelector('.reset-zoom');
+                const fullscreenBtn = container.querySelector('.fullscreen');
+
+                function updateTransform() {
+                    mermaidElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+                    if (scale > 1) {
+                        container.classList.add('zoomed');
+                    } else {
+                        container.classList.remove('zoomed');
+                    }
+
+                    mermaidElement.style.cursor = isDragging ? 'grabbing' : 'grab';
+                }
+
+                if (zoomInBtn) {
+                    zoomInBtn.addEventListener('click', () => {
+                        scale = Math.min(scale * 1.25, 4);
+                        updateTransform();
+                    });
+                }
+
+                if (zoomOutBtn) {
+                    zoomOutBtn.addEventListener('click', () => {
+                        scale = Math.max(scale / 1.25, 0.3);
+                        if (scale <= 1) {
+                            translateX = 0;
+                            translateY = 0;
+                        }
+                        updateTransform();
+                    });
+                }
+
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', () => {
+                        scale = 1;
+                        translateX = 0;
+                        translateY = 0;
+                        updateTransform();
+                    });
+                }
+
+                if (fullscreenBtn) {
+                    fullscreenBtn.addEventListener('click', () => {
+                        if (container.requestFullscreen) {
+                            container.requestFullscreen();
+                        } else if (container.webkitRequestFullscreen) {
+                            container.webkitRequestFullscreen();
+                        } else if (container.msRequestFullscreen) {
+                            container.msRequestFullscreen();
+                        }
+                    });
+                }
+
+                // Mouse Events
+                mermaidElement.addEventListener('mousedown', (e) => {
+                    if (isTouch) return; // 如果是触摸设备，忽略鼠标事件
+
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    mermaidElement.style.cursor = 'grabbing';
+                    updateTransform();
+                    e.preventDefault();
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (isDragging && !isTouch) {
+                        translateX = e.clientX - startX;
+                        translateY = e.clientY - startY;
+                        updateTransform();
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging && !isTouch) {
+                        isDragging = false;
+                        mermaidElement.style.cursor = 'grab';
+                        updateTransform();
+                    }
+                });
+
+                document.addEventListener('mouseleave', () => {
+                    if (isDragging && !isTouch) {
+                        isDragging = false;
+                        mermaidElement.style.cursor = 'grab';
+                        updateTransform();
+                    }
+                });
+
+                // 获取两点之间的距离
+                function getTouchDistance(touch1, touch2) {
+                    return Math.hypot(
+                        touch2.clientX - touch1.clientX,
+                        touch2.clientY - touch1.clientY
+                    );
+                }
+
+                // Touch Events - 触摸事件处理
+                mermaidElement.addEventListener('touchstart', (e) => {
+                    isTouch = true;
+                    touchStartTime = Date.now();
+
+                    if (e.touches.length === 1) {
+                        // 单指拖动
+                        isPinching = false;
+                        isDragging = true;
+
+                        const touch = e.touches[0];
+                        startX = touch.clientX - translateX;
+                        startY = touch.clientY - translateY;
+
+                    } else if (e.touches.length === 2) {
+                        // 双指缩放
+                        isPinching = true;
+                        isDragging = false;
+
+                        const touch1 = e.touches[0];
+                        const touch2 = e.touches[1];
+                        initialDistance = getTouchDistance(touch1, touch2);
+                        initialScale = scale;
+                    }
+
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 1 && isDragging && !isPinching) {
+                        // 单指拖动
+                        const touch = e.touches[0];
+                        translateX = touch.clientX - startX;
+                        translateY = touch.clientY - startY;
+                        updateTransform();
+
+                    } else if (e.touches.length === 2 && isPinching) {
+                        // 双指缩放
+                        const touch1 = e.touches[0];
+                        const touch2 = e.touches[1];
+                        const currentDistance = getTouchDistance(touch1, touch2);
+
+                        if (initialDistance > 0) {
+                            const newScale = Math.min(Math.max(
+                                initialScale * (currentDistance / initialDistance),
+                                0.3
+                            ), 4);
+                            scale = newScale;
+                            updateTransform();
+                        }
+                    }
+
+                    e.preventDefault();
+                }, { passive: false });
+
+                mermaidElement.addEventListener('touchend', (e) => {
+                    // 重置状态
+                    if (e.touches.length === 0) {
+                        isDragging = false;
+                        isPinching = false;
+                        initialDistance = 0;
+
+                        // 延迟重置isTouch，避免鼠标事件立即触发
+                        setTimeout(() => {
+                            isTouch = false;
+                        }, 100);
+                    } else if (e.touches.length === 1 && isPinching) {
+                        // 从双指变为单指，切换为拖动模式
+                        isPinching = false;
+                        isDragging = true;
+
+                        const touch = e.touches[0];
+                        startX = touch.clientX - translateX;
+                        startY = touch.clientY - translateY;
+                    }
+
+                    updateTransform();
+                });
+
+                mermaidElement.addEventListener('touchcancel', (e) => {
+                    isDragging = false;
+                    isPinching = false;
+                    initialDistance = 0;
+
+                    setTimeout(() => {
+                        isTouch = false;
+                    }, 100);
+
+                    updateTransform();
+                });
+
+                // Enhanced wheel zoom with better center point handling
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const rect = container.getBoundingClientRect();
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    const newScale = Math.min(Math.max(scale * delta, 0.3), 4);
+
+                    // Adjust translation to zoom towards center
+                    if (newScale !== scale) {
+                        const scaleDiff = newScale / scale;
+                        translateX = translateX * scaleDiff;
+                        translateY = translateY * scaleDiff;
+                        scale = newScale;
+
+                        if (scale <= 1) {
+                            translateX = 0;
+                            translateY = 0;
+                        }
+
+                        updateTransform();
+                    }
+                });
+
+                // Initialize display
+                updateTransform();
+            });
+        }
+
+        // Call the function to set up mermaid controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for mermaid to render
+            setTimeout(() => {
+                initializeMermaidControls();
+            }, 1000);
+        });
+
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active TOC link highlighting
+        function updateActiveTocLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const tocLinks = document.querySelectorAll('.toc-link');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                if (window.scrollY >= sectionTop - 100 && window.scrollY < sectionTop + sectionHeight - 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveTocLink);
+        updateActiveTocLink(); // Initial call
+
+        // Mobile TOC toggle (for responsive design)
+        let mobileToggleBtn = null;
+
+        function toggleTOC() {
+            const toc = document.querySelector('.toc-fixed');
+            toc.classList.toggle('open');
+            mobileToggleBtn.innerHTML = toc.classList.contains('open') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        }
+
+        function handleResize() {
+            const toc = document.querySelector('.toc-fixed');
+            if (window.innerWidth <= 1024) {
+                // Create the button if it doesn't exist
+                if (!mobileToggleBtn) {
+                    mobileToggleBtn = document.createElement('button');
+                    mobileToggleBtn.className = 'fixed top-4 left-4 z-[1001] bg-teal-accent text-white p-3 rounded-lg shadow-lg lg:hidden';
+                    mobileToggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    mobileToggleBtn.onclick = toggleTOC;
+                    document.body.appendChild(mobileToggleBtn);
+                }
+                // Close the TOC when resizing to mobile
+                toc.classList.remove('open');
+            } else {
+                // Remove the button if it exists
+                if (mobileToggleBtn) {
+                    mobileToggleBtn.remove();
+                    mobileToggleBtn = null;
+                }
+                // Open the TOC when resizing to desktop
+                toc.classList.remove('open');
+            }
+        }
+
+        // Initial setup
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        // Close the TOC when clicking on a link (mobile)
+        document.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 1024) {
+                    toggleTOC();
+                }
+            });
+        });
+    </script>
+  
+
+</body></html>
